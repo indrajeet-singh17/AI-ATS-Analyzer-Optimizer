@@ -1,13 +1,15 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+// Normalize VITE_API_URL: strip trailing slashes if user included one
+const rawApiUrl = import.meta.env.VITE_API_URL || '';
+const API_BASE_URL = rawApiUrl.endsWith('/') ? rawApiUrl.slice(0, -1) : rawApiUrl;
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Accept': 'application/json',
   },
-  timeout: 120000, // 2 minutes max timeout for analysis pipeline
+  timeout: 120000, // 2 minutes timeout to handle Render free-tier cold starts (sleeping servers take ~30s to boot)
 });
 
 /**

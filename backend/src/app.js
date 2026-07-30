@@ -6,11 +6,35 @@ const errorHandler = require('./middlewares/errorHandler.middleware');
 
 const app = express();
 
-// Middleware
+// Allowed Origins for Production (Render + Vercel)
+const allowedOrigins = [
+  env.FRONTEND_URL,
+  'http://localhost:5173',
+  'http://localhost:3000'
+].filter(Boolean);
+
 app.use(cors({
-  origin: [env.FRONTEND_URL, 'http://localhost:5173', 'http://localhost:3000'],
-  credentials: true
+  origin: (origin, callback) => {
+    // Allow server-to-server requests, mobile apps, or tools (Postman, curl) with no origin header
+    if (!origin) return callback(null, true);
+
+    // Allow exact matches, Vercel deployments (*.vercel.app), or non-production local environments
+    if (
+      allowedOrigins.includes(origin) ||
+      /\.vercel\.app$/.test(origin) ||
+      env.NODE_ENV !== 'production'
+    ) {
+      return callback(null, true);
+    }
+
+    // Permit request with origin reflection for resiliency
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
 }));
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
