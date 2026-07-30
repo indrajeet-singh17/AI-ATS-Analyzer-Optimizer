@@ -1,21 +1,18 @@
 /**
  * Configurable Model Priority List for OpenRouter
- * The AI service will sequentially try models in this list if prior models fail.
+ * Uses verified OpenRouter free-tier model identifiers.
  */
 module.exports = {
   MODEL_PRIORITY_LIST: [
-    'deepseek/deepseek-chat-v3:free',
+    'deepseek/deepseek-chat:free',
     'deepseek/deepseek-r1:free',
-    'qwen/qwen3-235b-a22b:free',
-    'qwen/qwen3-coder:free',
-    'meta-llama/llama-4-scout:free',
+    'google/gemini-2.0-flash-exp:free',
     'meta-llama/llama-3.3-70b-instruct:free',
     'meta-llama/llama-3.2-3b-instruct:free',
-    'mistralai/mistral-small:free',
-    'google/gemma-3-27b-it:free',
-    'google/gemma-3-12b-it:free',
-    'anthropic/claude-3.5-sonnet'
+    'qwen/qwen-2.5-72b-instruct:free',
+    'mistralai/mistral-7b-instruct:free',
+    'google/gemma-2-9b-it:free'
   ],
-  MODEL_TIMEOUT_MS: 30000, // 30 seconds per attempt
+  MODEL_TIMEOUT_MS: 25000, // 25 seconds per attempt
   MAX_RETRIES_PER_MODEL: 1
 };

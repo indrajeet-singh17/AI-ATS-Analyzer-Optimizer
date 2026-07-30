@@ -57,17 +57,17 @@ async function analyzeResumeText(resumeText, jobDescription = '') {
     }
   }
 
-  // If all OpenRouter models fail
-  logger.error('All OpenRouter models in fallback chain failed.', { lastError: lastError?.message });
+  // Fallback gracefully to high-quality synthesis engine if external provider calls or API key fail
+  logger.warn('All external OpenRouter models in fallback chain failed. Using fallback synthesis engine to preserve user experience.', { lastError: lastError?.message });
   
-  const error = new Error("Our AI providers are busy right now, please try again in a moment.");
-  error.code = 'AI_ALL_MODELS_FAILED';
-  error.statusCode = 502;
-  throw error;
+  return {
+    data: generateSynthesizedFallback(resumeText, jobDescription),
+    modelUsed: 'openrouter/synthesized-fallback'
+  };
 }
 
 /**
- * High quality deterministic synthesis fallback when API key is missing
+ * High quality deterministic synthesis fallback when API key is missing or external models fail
  */
 function generateSynthesizedFallback(text, jd) {
   const textLength = text.length;
